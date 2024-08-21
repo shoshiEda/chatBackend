@@ -56,6 +56,10 @@ const signup = async (newData) =>{
         return users.map(user => user.userName)
     }
 
+    const getUserById = (id)=>{
+        return userModel.findById(id) 
+    }
+
     const addUserToConversation = async(conversation,username)=>{
         const updatedUser = await userModel.findOneAndUpdate(
             { userName: username },
@@ -67,6 +71,6 @@ const signup = async (newData) =>{
 
 
 
-module.exports = {login,signup,logout,getAllUsers,addUserToConversation}
+module.exports = {login,signup,logout,getAllUsers,addUserToConversation,getUserById}
 
 

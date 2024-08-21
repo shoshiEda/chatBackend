@@ -18,12 +18,25 @@ router.post("/", async (req,res) => {       //create new room
     }
 })
 
+router.get("/:conversationId", async (req,res) => {            //add a new msg
+    try{
+    const {conversationId} = req.params
+    if (!conversationId) return res.status(401).send({error: "missing details"})
+    const {conversation} = await conversationService.getConversationById(conversationId)
+    res.json({conversation})
+}
+catch (err) {
+    console.error(`There was an error to sign up:${err}`)
+    res.status(500).send({ err})
+}
+})
+
 router.post("/msg/:conversationId", async (req,res) => {            //add a new msg
         try{
-        const {conversationId} = req.params.conversationId
+        const {conversationId} = req.params
         const{username,msg} = req.body
-        if (!username || !msg || conversationId) return res.status(401).send({error: "missing details"})
-        const {status} = await conversationService.sendNewMsg(username,conversasionId,msg)
+        if (!username || !msg || !conversationId) return res.status(401).send({error: "missing details"})
+        const {status} = await conversationService.sendNewMsg(username,conversationId,msg)
         res.json({status})
     }
     catch (err) {

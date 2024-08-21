@@ -66,6 +66,23 @@ router.get("/", async (req,res)=>{
     }
 })
 
+router.get("/:id", async (req,res)=>{
+    try{
+        const {id} = req.params
+        const user = await userService.getUserById(id)
+        if(user){
+            res.json({user})
+        }    
+        else{
+            return res.status(401).json({ success: false, error: 'no user with this id' });
+        }
+        }
+    catch (err) {
+        console.error(`There was an error to get user by id:${err}`)
+        res.status(500).send({ err})
+    }
+})
+
 
 
 

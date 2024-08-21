@@ -44,8 +44,9 @@ const createNewConversation = async (type,name,username,creator=username) =>{
 const sendNewMsg = async(username,conversasionId,msg)=>{
     const conversation = conversationModel.findById(conversasionId)
     if(!conversation)
-        throw new Error('conversasionId is not valid!')    
-    if (conversation.blocked.includes(username))
+        throw new Error('conversasionId is not valid!') 
+    console.log(conversation)   
+    if (conversation.blocked && conversation.blocked.length && conversation.blocked.includes(username))
         return({status:'blocked user'})
     else{
         conversation.msg.unshift({username,msg})
@@ -54,9 +55,16 @@ const sendNewMsg = async(username,conversasionId,msg)=>{
     }
 }
 
+const getConversationById = async(conversasionId)=>{
+    const conversation = conversationModel.findById(conversasionId)
+    if(!conversation)
+        throw new Error('conversasionId is not valid!')    
+    return ({conversation})
+}
 
 
 
-module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg}
+
+module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg,getConversationById}
 
 
