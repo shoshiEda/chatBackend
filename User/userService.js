@@ -21,7 +21,7 @@ const login = async (username, password) =>{
     const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash)
     if(isPasswordCorrect){
         await userModel.findByIdAndUpdate(user._id,{isLoggedIn:true})
-        const token =  jwt.sign({userName:username,conversations:user.conversations}, secret)
+        const token =  jwt.sign({userId:user._id,userName:username,conversations:user.conversations}, secret)
         if(token)   return { token } 
     }
     else return{token:null,error: "Invalid username or password"}           
@@ -41,7 +41,7 @@ const signup = async (newData) =>{
         const newUser = {userName:newData.username,passwordHash:hashedPassword,conversations:publicConversasions,isLoggedIn:true }
         updatedNewUser = new userModel(newUser)
         await updatedNewUser.save()            
-        const token =  jwt.sign({userName:newData.username,conversations:publicConversasions}, secret)
+        const token =  jwt.sign({userId:updatedNewUser._id,userName:newData.username,conversations:publicConversasions}, secret)
         if(token)   return { token }  
     }
 
@@ -56,8 +56,17 @@ const signup = async (newData) =>{
         return users.map(user => user.userName)
     }
 
+    const addUserToConversation = async(conversation,username)=>{
+        const updatedUser = await userModel.findOneAndUpdate(
+            { userName: username },
+            { $push: { conversations: conversation } },
+            { new: true, useFindAndModify: false } 
+        )
+        return updatedUser
+    }
 
 
-module.exports = {login,signup,logout,getAllUsers}
+
+module.exports = {login,signup,logout,getAllUsers,addUserToConversation}
 
 

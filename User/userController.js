@@ -14,9 +14,8 @@ router.post("/login", async (req,res) => {
         if (response.token) {
         res.json({success: true,token:response.token})
         }else{
-            res.json({success: false,error:response.error})
-            res.status(401).send({ error: response.error });
-            log.error(`There was an error to logged in:${response.error}`)
+            console.error(`There was an error to log in: ${response.error}`);
+            res.status(401).json({ success: false, error: response.error });
         }
     }
     catch (err) {
@@ -34,9 +33,8 @@ router.post("/signup", async (req,res) => {
             res.json({success: true,token:signupData.token})
         }
         else{
-            res.json({success: false,error:signupData.error})
-            res.status(401).send({ error: signupData.error });
-            console.error(`There was an error to logged in:${signupData.error}`)
+            console.error(`There was an error to sign up:${signupData.error}`)
+            return res.status(401).json({ success: false, error: signupData.error });
         }
     }
     catch (err) {
