@@ -1,13 +1,15 @@
 const conversationModel = require("./conversationModel")
+delete require.cache[require.resolve('../User/userService')];
 const userService = require("../User/userService")
 
 const adminConversations = ['Main','Politics','Music','TV shows']
+
 
 const createAdminConversations = async(username)=>{
     let conversations=[]
     for (const conversation of adminConversations) {
          const newConversation = await createNewConversation('Public',conversation,username,'Admin')
-         conversations.push(newConversation)
+         conversations.push({id:newConversation._id,name:newConversation.name})
     }
     return conversations
 }
@@ -15,10 +17,10 @@ const createAdminConversations = async(username)=>{
 
 const loadPublicConversations = async(username)=>{
     const conversations = await conversationModel.find({type:'Public'})
-    for (const conversation of conversations) {
-        await joinToConversation(conversation._id, username)
+    if(conversations && conversations.length){
+        return conversations.map(con=> ({id:con._id,name:con.name}))
     }
-    return conversations
+    return {}
 }
 
 const getPublicConversations = async(username)=>{
@@ -31,6 +33,7 @@ const joinToConversation = async (conversasionId,username) =>{
     if (!conversation) throw new Error('conversation does not exist!')
     conversation.usersInclude.push(username)
     await conversation.save()
+    await userService.addUserToConversation({id:conversasionId,name:conversation.name},username)
     return conversation
 }
 
@@ -38,25 +41,35 @@ const createNewConversation = async (type,name,username,creator=username) =>{
     const newConversation = {type,name,usersInclude:[username],msgs:[],blocked:[],creator}
     const savedConversation = new conversationModel(newConversation)
     await savedConversation.save()
+    await userService.addUserToConversation({id:savedConversation._id,name:savedConversation.name},username)
     return savedConversation
 }
  
-const sendNewMsg = async(username,conversasionId,msg)=>{
-    const conversation = conversationModel.findById(conversasionId)
-    if(!conversation)
+const sendNewMsg = async(username,conversationId,msg)=>{
+    const conversation = await conversationModel.findById(conversationId)
+    if(!conversation || conversation.length)
         throw new Error('conversasionId is not valid!')    
-    if (conversation.blocked.includes(username))
+    if (conversation.blocked && conversation.blocked.length && conversation.blocked.includes(username))
         return({status:'blocked user'})
     else{
-        conversation.msg.unshift({username,msg})
+        conversation.msgs.unshift({username,msg})
         conversation.save()
-        return ({status:'success'})
+        return ({msgs:conversation.msgs})
+    }
+}
+
+const getconversationById = async(conversationId)=>{
+    const conversation = await conversationModel.findById(conversationId)
+    if(!conversation)
+        throw new Error('conversasionId is not valid!')    
+    else{
+        return (conversation)
     }
 }
 
 
 
 
-module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg}
+module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg,getconversationById}
 
 

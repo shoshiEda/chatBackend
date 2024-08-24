@@ -65,8 +65,12 @@ const signup = async (newData) =>{
         return updatedUser
     }
 
+    const getUserById = async(id)=>{
+        return userModel.findById(id)
+    }
 
 
-module.exports = {login,signup,logout,getAllUsers,addUserToConversation}
+
+module.exports = {login,signup,logout,getAllUsers,addUserToConversation,getUserById}
 
 

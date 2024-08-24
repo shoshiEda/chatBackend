@@ -66,6 +66,20 @@ router.get("/", async (req,res)=>{
     }
 })
 
+router.get("/:id", async (req,res)=>{
+    try{
+        const {id} = req.params
+        const user = await userService.getUserById(id)
+        res.json({user})
+        }
+    catch (err) {
+        console.error(`There was an error to logout:${err}`)
+        res.status(500).send({ err})
+    }
+})
+
+
+
 
 
 

@@ -4,7 +4,6 @@ const app = express();
 const port = 8000;
 const cors = require("cors")
 
-const authenticateToken = require('./middlewere/requireAuth')
 
 
 
@@ -21,7 +20,7 @@ const userController = require("./User/userController.js")
 app.use("/user", userController)
 
 const conversationController = require("./Conversation/conversationController.js")
-app.use("/conversation", authenticateToken,conversationController)
+app.use("/conversation",conversationController)
 
 
 
