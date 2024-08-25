@@ -56,8 +56,10 @@ const signup = async (newData) =>{
         return users.map(user => user.userName)
     }
 
-    const getUserById = (id)=>{
-        return userModel.findById(id) 
+    const getUserById = async(id)=>{
+        const user = await userModel.findById(id)
+        return {userId:user._id,userName:user.userName,conversations:user.conversations}
+
     }
 
     const addUserToConversation = async(conversation,username)=>{

@@ -61,7 +61,7 @@ router.get("/", async (req,res)=>{
         res.json({users:usernamesArr})
         }
     catch (err) {
-        console.error(`There was an error to logout:${err}`)
+        console.error(`There was an error to get all connected users:${err}`)
         res.status(500).send({ err})
     }
 })
@@ -73,7 +73,7 @@ router.get("/:id", async (req,res)=>{
         res.json({user})
         }
     catch (err) {
-        console.error(`There was an error to logout:${err}`)
+        console.error(`There was an error to geting user by id:${err}`)
         res.status(500).send({ err})
     }
 })

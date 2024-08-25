@@ -34,7 +34,7 @@ const joinToConversation = async (conversasionId,username) =>{
     conversation.usersInclude.push(username)
     await conversation.save()
     await userService.addUserToConversation({id:conversasionId,name:conversation.name},username)
-    return conversation
+    return {status:'success'}
 }
 
 const createNewConversation = async (type,name,username,creator=username) =>{

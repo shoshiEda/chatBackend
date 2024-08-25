@@ -3,6 +3,7 @@ const router = express.Router()
 const conversationService = require("./conversationService.js")
 
 
+
 router.post("/", async (req,res) => {       //create new room
 
     const {type,name,username} = req.body
@@ -20,18 +21,6 @@ router.post("/", async (req,res) => {       //create new room
     }
 })
 
-router.get("/:conversationId", async (req,res) => {            //add a new msg
-    try{
-    const {conversationId} = req.params
-    if (!conversationId) return res.status(401).send({error: "missing details"})
-    const {conversation} = await conversationService.getConversationById(conversationId)
-    res.json({conversation})
-}
-catch (err) {
-    console.error(`There was an error to sign up:${err}`)
-    res.status(500).send({ err})
-}
-})
 
 router.post("/msg/:conversationId", async (req,res) => {            //add a new msg
         try{
@@ -50,7 +39,7 @@ router.post("/msg/:conversationId", async (req,res) => {            //add a new 
 
 router.post("/user/:conversationId/:username", async (req,res)=>{            //joinToConversation
     try{
-        const {username} = req.params.userId
+        const {username} = req.params
         const {conversationId} = req.params
         const {status} = await conversationService.joinToConversation(conversationId,username)
         res.json({status})
