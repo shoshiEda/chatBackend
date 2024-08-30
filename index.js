@@ -15,19 +15,41 @@ app.use(cors())
 
 const io = new Server(server, {
   cors:{
-    origin:"http://localhost:5173"
-  }
+    origin:"http://localhost:5173",
+    methods:['GET','POST'], 
+  },
+  reconnection: false
 })
 
 
 io.on('connection',socket=>{
-  console.log(socket.id)
+
+  console.log(`user connected:${socket.id}`)
 
   socket.on("send-msg",(data)=>{
-    socket.broadcast.emit('receive-msg',data)
+    socket.broadcast.to(data.conversationId).emit('receive-msg',data)
+  })
+  //to all exept me
+  //socket.broadcast.emit("change-users-in-room")
+
+  socket.on('disconnect',()=>{
+    console.log(`user disconnected:${socket.id}`)
   })
 
-})
+  socket.on('join-room',(roomId)=>{
+    socket.join(roomId)
+    console.log(`user with id:${socket.id} joined room ${roomId}`)
+
+  })
+
+
+  })
+
+  //io.emit to all clients
+
+  //socket.emit() = only to you
+
+
 
  require("./configs/database.js")
 

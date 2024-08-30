@@ -26,7 +26,6 @@ router.post("/msg/:conversationId", async (req,res) => {            //add a new 
         try{
         const {conversationId} = req.params
         const{username,msg} = req.body
-        console.log(conversationId,username,msg)
         if (!username || !msg || !conversationId) return res.status(401).send({error: "missing details"})
         const {msgs} = await conversationService.sendNewMsg(username,conversationId,msg)
         res.json({conversationId, msgs})
