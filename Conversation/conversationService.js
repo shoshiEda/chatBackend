@@ -4,6 +4,8 @@ const userService = require("../User/userService")
 
 const adminConversations = ['Main','Politics','Music','TV shows']
 
+const MAX_MSG = 20
+
 
 const createAdminConversations = async(username)=>{
     let conversations=[]
@@ -53,6 +55,12 @@ const sendNewMsg = async(username,conversationId,msg)=>{
         return({status:'blocked user'})
     else{
         conversation.msgs.unshift({username,msg})
+        if(conversation.msgs.length > MAX_MSG)
+        {
+            const newMsgs = conversation.msgs.slice(0, MAX_MSG)
+            console.log(newMsgs.length)
+            conversation.msgs = newMsgs
+        }
         conversation.save()
         return ({msgs:conversation.msgs})
     }
