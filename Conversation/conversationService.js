@@ -54,11 +54,10 @@ const sendNewMsg = async(username,conversationId,msg)=>{
     if (conversation.blocked && conversation.blocked.length && conversation.blocked.includes(username))
         return({status:'blocked user'})
     else{
-        conversation.msgs.unshift({username,msg})
+        conversation.msgs.push({username,msg})
         if(conversation.msgs.length > MAX_MSG)
         {
-            const newMsgs = conversation.msgs.slice(0, MAX_MSG)
-            console.log(newMsgs.length)
+            const newMsgs = conversation.msgs.slice(conversation.msgs.length-MAX_MSG, conversation.msgs.length)
             conversation.msgs = newMsgs
         }
         conversation.save()
