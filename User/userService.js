@@ -71,10 +71,19 @@ const signup = async (newData) =>{
         return updatedUser
     }
 
+    const removeUserFromConversation = async(conversation,username)=>{
+        const updatedUser = await userModel.findOneAndUpdate(
+            { userName: username },
+            { $pull: { conversations: conversation } },
+            { new: true, useFindAndModify: false } 
+        )
+        return updatedUser
+    }
+
     
 
 
 
-module.exports = {login,signup,logout,getAllUsers,addUserToConversation,getUserById}
+module.exports = {login,signup,logout,getAllUsers,addUserToConversation,getUserById,removeUserFromConversation}
 
 

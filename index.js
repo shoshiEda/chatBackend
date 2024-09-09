@@ -64,7 +64,7 @@ io.on('connection',socket=>{
 
 
   socket.on('join-room', (roomName, userName) => {
-    //console.log(`user ${userName} with id: ${socket.id} has joined room:${roomName}`)
+    console.log(`user ${userName} with id: ${socket.id} has joined room:${roomName}`)
     socket.userName = userName
     socket.roomName = roomName
     if (!roomName || !userName) {
@@ -81,7 +81,7 @@ io.on('connection',socket=>{
       socket.join(roomName)
       io.to(roomName).emit('update-users', rooms[roomName])
       console.log(`${userName} joined room ${roomName}`);
-      console.log(rooms,privateRooms)
+      //console.log(rooms,privateRooms)
       }
   })
 
@@ -121,13 +121,35 @@ io.on('connection',socket=>{
   })
 
   socket.on('create-new-room',(data)=>{
-  console.log('data',data)
+  //console.log('data',data)
   data.users.forEach(username => {
     const targetSocketId = getSocketIdByUsername(username) 
     console.log('targetSocketId',targetSocketId)
     if (targetSocketId) {
       io.to(targetSocketId).emit('new-room-notification',data)
     }
+  })
+})
+
+socket.on('join-user-to-room',(data)=>{
+  data.users.forEach(username => {
+    const targetSocketId = getSocketIdByUsername(username) 
+    console.log('targetSocketId',targetSocketId)
+    if (targetSocketId) {
+      io.to(targetSocketId).emit('new-room-notification',data)
+    }
+  })
+})
+
+socket.on('update-blocked-users',(data)=>{
+  data.users.forEach(username => {
+    if(rooms[data.room.name].includes(username)){
+      const targetSocketId = getSocketIdByUsername(username) 
+      console.log('targetSocketId',targetSocketId)
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('new-blocked-notification',data)
+      }
+    } 
   })
 })
 

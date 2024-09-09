@@ -39,6 +39,15 @@ const joinToConversation = async (conversasionId,username) =>{
     return {status:'success'}
 }
 
+const exitFromConversation = async (conversasionId,username) =>{
+    const conversation = await conversationModel.findById(conversasionId)
+    if (!conversation) throw new Error('conversation does not exist!')
+    conversation.usersInclude = conversation.usersInclude.filter(user => user !== username);
+    await conversation.save()
+    await userService.removeUserFromConversation({id:conversasionId,name:conversation.name},username)
+    return {status:'success'}
+}
+
 const createNewConversation = async (type,name,username,creator=username) =>{
     const newConversation = {type,name,usersInclude:[username],msgs:[],blocked:[],creator}
     const savedConversation = new conversationModel(newConversation)
@@ -74,9 +83,19 @@ const getconversationById = async(conversationId)=>{
     }
 }
 
+const blockUserFromConversation = async(conversationId,usernames)=>{
+    const conversation = await conversationModel.findById(conversationId)
+    if(!conversation)
+        throw new Error('conversasionId is not valid!')    
+    else{
+                conversation.blocked=usernames
+                await conversation.save()
+        }
+}
 
 
 
-module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg,getconversationById}
+
+module.exports = {joinToConversation,createNewConversation,createAdminConversations,loadPublicConversations,getPublicConversations,sendNewMsg,getconversationById,blockUserFromConversation,exitFromConversation}
 
 

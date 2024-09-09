@@ -49,6 +49,20 @@ router.post("/user/:conversationId/:username", async (req,res)=>{            //j
     }
 })
 
+router.post("/remove-user/:conversationId/:username", async (req,res)=>{            //joinToConversation
+    try{
+        const {username} = req.params
+        const {conversationId} = req.params
+        const {status} = await conversationService.exitFromConversation(conversationId,username)
+        res.json({status})
+        }
+    catch (err) {
+        console.error(`There was an error to exit conversation:${err}`)
+        res.status(500).send({ err})
+    }
+})
+
+
 router.get("/:conversationId", async (req,res)=>{                   //get selected conversation
     try{
         const {conversationId} = req.params
@@ -60,6 +74,22 @@ router.get("/:conversationId", async (req,res)=>{                   //get select
         res.status(500).send({ err})
     }
 })
+
+router.post("/block/:conversationId", async (req,res)=>{                   //get selected conversation
+    try{
+        const {conversationId} = req.params
+        const {usernames} = req.body
+        const conversation = await conversationService.blockUserFromConversation(conversationId,usernames)
+        res.json(conversation)
+        }
+    catch (err) {
+        console.error(`There was an error to block user:${err}`)
+        res.status(500).send({ err})
+    }
+})
+
+
+
 
 
 
