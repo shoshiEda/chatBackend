@@ -75,7 +75,7 @@ router.get("/:conversationId", async (req,res)=>{                   //get select
     }
 })
 
-router.post("/block/:conversationId", async (req,res)=>{                   //get selected conversation
+router.post("/block/:conversationId", async (req,res)=>{                   //blocl user from conversation
     try{
         const {conversationId} = req.params
         const {usernames} = req.body

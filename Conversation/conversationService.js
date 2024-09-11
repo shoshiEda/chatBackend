@@ -33,6 +33,8 @@ const getPublicConversations = async(username)=>{
 const joinToConversation = async (conversasionId,username) =>{
     const conversation = await conversationModel.findById(conversasionId)
     if (!conversation) throw new Error('conversation does not exist!')
+    if(conversation.usersInclude.includes(username)) throw new Error("username already exist in this conversation");
+    
     conversation.usersInclude.push(username)
     await conversation.save()
     await userService.addUserToConversation({id:conversasionId,name:conversation.name},username)
@@ -85,6 +87,7 @@ const getconversationById = async(conversationId)=>{
 
 const blockUserFromConversation = async(conversationId,usernames)=>{
     const conversation = await conversationModel.findById(conversationId)
+    console.log('usernames:',usernames)
     if(!conversation)
         throw new Error('conversasionId is not valid!')    
     else{

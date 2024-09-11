@@ -64,7 +64,7 @@ io.on('connection',socket=>{
 
 
   socket.on('join-room', (roomName, userName) => {
-    console.log(`user ${userName} with id: ${socket.id} has joined room:${roomName}`)
+    //console.log(`user ${userName} with id: ${socket.id} has joined room:${roomName}`)
     socket.userName = userName
     socket.roomName = roomName
     if (!roomName || !userName) {
@@ -80,7 +80,7 @@ io.on('connection',socket=>{
         rooms[roomName].push({ id: socket.id, name: userName });
       socket.join(roomName)
       io.to(roomName).emit('update-users', rooms[roomName])
-      console.log(`${userName} joined room ${roomName}`);
+      //console.log(`${userName} joined room ${roomName}`);
       //console.log(rooms,privateRooms)
       }
   })
@@ -132,7 +132,9 @@ io.on('connection',socket=>{
 })
 
 socket.on('join-user-to-room',(data)=>{
+  //console.log('data',data)
   data.users.forEach(username => {
+    console.log('username',username)
     const targetSocketId = getSocketIdByUsername(username) 
     console.log('targetSocketId',targetSocketId)
     if (targetSocketId) {
