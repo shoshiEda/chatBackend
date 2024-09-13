@@ -72,6 +72,7 @@ const signup = async (newData) =>{
     }
 
     const removeUserFromConversation = async(conversation,username)=>{
+       // console.log('conversation:',conversation,'username:',username)
         const updatedUser = await userModel.findOneAndUpdate(
             { userName: username },
             { $pull: { conversations: conversation } },

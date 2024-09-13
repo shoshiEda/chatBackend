@@ -26,14 +26,14 @@ const privateRooms = {}
 
 io.on('connection',socket=>{
 
-  console.log(`user connected:${socket.id}`)
+  //console.log(`user connected:${socket.id}`)
   socket.on('set-username', (username) => {
     socket.username = username
-    console.log('Username set for socket:', socket.id, username);
+    //console.log('Username set for socket:', socket.id, username);
   });
 
   socket.on("send-msg",(data)=>{
-    //console.log(data)
+    //console.log('send-msg:',data)
     socket.to(data.conversationName).emit('receive-msg',data)
 
 
@@ -59,7 +59,7 @@ io.on('connection',socket=>{
       io.to(roomName).emit('update-users', rooms[roomName])
     }
 
-    console.log(`User disconnected: ${socket.id}`)
+    //console.log(`User disconnected: ${socket.id}`)
   })
 
 
@@ -75,11 +75,15 @@ io.on('connection',socket=>{
       rooms[roomName] = []
     }
     const idx = rooms[roomName].findIndex(user=>user.name ===userName)
+    io.to(roomName).emit('update-users', rooms[roomName])
+    //console.log(rooms[roomName])
+
     if(idx===-1)  
       {
         rooms[roomName].push({ id: socket.id, name: userName });
       socket.join(roomName)
       io.to(roomName).emit('update-users', rooms[roomName])
+
       //console.log(`${userName} joined room ${roomName}`);
       //console.log(rooms,privateRooms)
       }
@@ -124,7 +128,7 @@ io.on('connection',socket=>{
   //console.log('data',data)
   data.users.forEach(username => {
     const targetSocketId = getSocketIdByUsername(username) 
-    console.log('targetSocketId',targetSocketId)
+    //console.log('targetSocketId',targetSocketId)
     if (targetSocketId) {
       io.to(targetSocketId).emit('new-room-notification',data)
     }
@@ -134,9 +138,9 @@ io.on('connection',socket=>{
 socket.on('join-user-to-room',(data)=>{
   //console.log('data',data)
   data.users.forEach(username => {
-    console.log('username',username)
+    //console.log('username',username)
     const targetSocketId = getSocketIdByUsername(username) 
-    console.log('targetSocketId',targetSocketId)
+    //console.log('targetSocketId',targetSocketId)
     if (targetSocketId) {
       io.to(targetSocketId).emit('new-room-notification',data)
     }
@@ -147,14 +151,13 @@ socket.on('update-blocked-users',(data)=>{
   data.users.forEach(username => {
     if(rooms[data.room.name].includes(username)){
       const targetSocketId = getSocketIdByUsername(username) 
-      console.log('targetSocketId',targetSocketId)
+      //console.log('targetSocketId',targetSocketId)
       if (targetSocketId) {
         io.to(targetSocketId).emit('new-blocked-notification',data)
       }
     } 
   })
 })
-
 
 function getSocketIdByUsername(username) {
   const clients = io.sockets.sockets
@@ -169,12 +172,6 @@ function getSocketIdByUsername(username) {
 
 })
 
-
-
-
-  //io.emit to all clients
-
-  //socket.emit() = only to you
 
 
 

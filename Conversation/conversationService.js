@@ -46,7 +46,8 @@ const exitFromConversation = async (conversasionId,username) =>{
     if (!conversation) throw new Error('conversation does not exist!')
     conversation.usersInclude = conversation.usersInclude.filter(user => user !== username);
     await conversation.save()
-    await userService.removeUserFromConversation({id:conversasionId,name:conversation.name},username)
+    const updatedUser = await userService.removeUserFromConversation({id:conversasionId,name:conversation.name},username)
+    //console.log('updatedUser:',updatedUser)
     return {status:'success'}
 }
 
@@ -87,7 +88,7 @@ const getconversationById = async(conversationId)=>{
 
 const blockUserFromConversation = async(conversationId,usernames)=>{
     const conversation = await conversationModel.findById(conversationId)
-    console.log('usernames:',usernames)
+    //console.log('usernames:',usernames)
     if(!conversation)
         throw new Error('conversasionId is not valid!')    
     else{
